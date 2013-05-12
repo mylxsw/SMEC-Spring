@@ -7,12 +7,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 用于标识一个方法需要缓存
+ * Indicate that the annotated method will be cached.
  * @author code.404
  * @2013-5-11
  * Site : http://blog.orionis.name
  * 
- * 使用方法：
+ * Usage：
  * 		使用该annotation标注的方法的返回值会被缓存。
  * 		value: 指定了缓存使用的key，默认程序会根据方法签名以及参数列表的取值
  * 	自动生成MD5散列加密的key，如果需要使用重载缓存功能的话，必须手动指定一个
@@ -41,40 +41,40 @@ import java.lang.annotation.Target;
 @Documented
 public @interface Cached {
 	/**
-	 * 缓存使用的key
-	 * 默认采用方法签名自动创建
-	 * 如果是在重载缓存时，则支持正则表达式匹配
+	 * The key to save or retrieve data from cache
+	 * By default, system will auto-generate one according to method signature
+	 * If rebuild the cache, you can use regular expression
 	 * @return
 	 */
 	String value() default "";
 	/**
-	 * 是否在key之后增加参数，以作区分
-	 * 默认是true，一般情况下是需要追加参数的，这样才能使得
-	 * 不同参数获取不同的缓存内容
+	 * Whether append parameters behind the key
+	 * By default it is true, and in general, we need it, so we can get different
+	 * content with different parameters
 	 * @return
 	 */
 	boolean appendParam() default true;
 	/**
-	 * 过期时间
-	 * 默认为-1，即永不过期
+	 * Expiration time
+	 * By default it is -1, means never be out of date.
 	 * @return
 	 */
 	long expiration() default -1;
 	
 	/**
-	 * 标注方法，用于重载指定key的缓存内容
+	 * Indicate that this method is used to reload specified cache.
 	 * @return
 	 */
 	boolean reload() default false;
 	/**
-	 * 是否在value上使用正则表达式
-	 * 如果是，则启用正则表达式匹配
-	 * 否则只可以使用*进行匹配
+	 * Whether enabled using regular expression for value parameter
+	 * If set to true, we can use.
+	 * By default , it is false, but we can use * represent arbitary string
 	 * @return
 	 */
 	boolean enableRegex() default false;
 	/**
-	 * 标识参数，如果为空，则默认使用所有参数
+	 * Identified parameters, if not set , used all parameters
 	 * @return
 	 */
 	String[] identifyParams() default {};

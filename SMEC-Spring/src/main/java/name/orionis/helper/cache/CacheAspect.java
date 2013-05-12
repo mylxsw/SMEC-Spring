@@ -11,7 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 实现基于annotation的缓存
+ * Cache Implementation Aspect
  * @author code.404
  * @2013-5-11
  * Site : http://blog.orionis.name
@@ -26,33 +26,33 @@ public class CacheAspect {
 	@Around("cached()")
 	public Object cacheMethod(ProceedingJoinPoint pjp) throws Throwable{
 		
-		// 当前访问方法的所有参数名称
+		// The parameter`s names of current access method
 		String[] parameterNames = ((MethodSignature) pjp.getSignature()).getParameterNames();
 		
 		
-		// 方法上的Cached注解，以及注解的值
+		// Get the @Cached annotation in method
 		Cached cachedAnnotation = pjp.getTarget().getClass()
 				.getMethod(pjp.getSignature().getName(),
 						((MethodSignature)pjp.getSignature()).getParameterTypes())
 						.getAnnotation(Cached.class);
-		// 自定义主键
+		// User-defined cache key
 		String key = cachedAnnotation.value();
 		
 		/**
-		 * 创建参数字符串
-		 * 首先，判断是否是需要附加参数，如果不需要，则该步骤可忽略
-		 * 第二，判断当前方法是否含有参数列表，如果没有，则该步骤忽略
-		 * 第三，判断是否明确指定了需要的附加参数，如果指定了，则使用指定的，
-		 * 否则，使用所有的参数
+		 * Create an string consist of parameters
+		 * First , we need to judge the addon parameters, if need not , skip
+		 * Secondly, We need to judge if the method has a parameters list, if not , skip
+		 * Thirdly, Judged if there explicit specified need addon parameter, if specified,
+		 * use it, otherwise, used all parameters
 		 */
 		String _paramsString = "";
 		if(cachedAnnotation.appendParam() && parameterNames.length != 0 ){
-			// 定义的标识方法
+			// get the identified parameters
 			String[] identifyParams = cachedAnnotation.identifyParams();
-			// 本次访问方法传递的参数值列表
+			// get the parameter`s values of current 
 			Object[] args = pjp.getArgs();
 			
-			if(identifyParams.length != 0){// 已指定标识参数
+			if(identifyParams.length != 0){// if explicit specified the identified parameters
 				for(int i = 0; i < identifyParams.length; i ++){
 					int index = ArrayUtils.indexOf(parameterNames, identifyParams[i]);
 					if(index == -1){
@@ -60,7 +60,7 @@ public class CacheAspect {
 					}
 					_paramsString += args[index];
 				}
-			}else{// 未指定标识参数
+			}else{// not explicit specified the identified parameters
 				for(Object o : args){
 					_paramsString += o.toString();
 				}
@@ -68,29 +68,30 @@ public class CacheAspect {
 		}
 
 		/**
-		 * 生成缓存主键
-		 * 如果没有指定key，则使用自动生成的key，最终key会被生成md5散列存储
-		 * 如果指定了key，则会直接使用key并追加参数
+		 * Generate an cache key
+		 * If not explicit specified a key, automatically generate one, then hash it
+		 * Otherwise,we specified one , then use it and append with parameter`s values
 		 */
 		if(key == null || "".equals(key)){
 			key = pjp.getStaticPart().toString();
-			// 生成key的md5散列
+			// generate md5 hash key
 			key = DigestUtils.md5Hex(key + _paramsString);
 		} else {
-			// 追加参数到key
+			// append parameters to key
 			if(!"".equals(_paramsString))
 				key += DigestUtils.md5Hex(_paramsString);
 		}
 		
 		/**
-		 * 判断当前执行的操作是否是重载缓存，如果是，则直接移除
-		 * 指定key对应的缓存，在下次访问相应方法时，会自动重建缓存
-		 * 支持正则表达式，必须手动指定value(key)
+		 * If current operation are reload cache, remove the cache related to current key
+		 * when we access the cached method next time, the cache will be rebuild
+		 * regular expression is supported, and we must explicit specified the value(key) 
+		 * attribute
 		 */
 		if(cachedAnnotation.reload()){
 			if(key == null || "".equals(key)){
-				log.error("没有指定重载缓存的主键!");
-				throw new IllegalArgumentException("没有指定重载缓存的主键");
+				log.error("Not specified an key!");
+				throw new IllegalArgumentException("Not specified an key!");
 			}
 			if(!cachedAnnotation.enableRegex())
 				key = key.replaceAll("\\*", "[\\\\w\\\\W]*");
@@ -99,13 +100,13 @@ public class CacheAspect {
 		}
 		
 		/**
-		 * 执行对象缓存
-		 * 如果存在缓存，则直接返回
-		 * 否则先缓存，再从缓存获取值
+		 * Execution 
+		 * If we already had an cache, directly return the cached result
+		 * otherwise cached it first , the reload value from cache
 		 */
 		if(!cache.isExist(key)){
 			Object proceed = pjp.proceed();
-			// 缓存过期时间
+			// cache expiration time
 			long expiration = cachedAnnotation.expiration();
 			cache.put(key, proceed, expiration);
 		}

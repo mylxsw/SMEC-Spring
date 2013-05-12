@@ -1,6 +1,6 @@
 package name.orionis.helper.cache;
 /**
- * 缓存操作接口
+ * Cache operation interface
  * @author code.404
  * @2013-5-11
  * Site : http://blog.orionis.name
@@ -8,45 +8,44 @@ package name.orionis.helper.cache;
  */
 public interface ICache {
 	/**
-	 * 缓存写入
+	 * Write To Cache
 	 * @param key
 	 * @param value
 	 */
 	public void put(String key , Object value);
 	/**
-	 * 缓存写入，带缓存时间
+	 * Write To Cache With Expiration Time
 	 * @param key
 	 * @param value
 	 * @param expiration
 	 */
 	public void put(String key, Object value, long expiration);
 	/**
-	 * 读取缓存内容
+	 * Read Cache Content
 	 * @param key
 	 * @return
 	 */
 	public Object get(String key);
 	/**
-	 * 是否存在key的缓存
+	 * Whether The Key Exist In Cache
 	 * @param key
 	 * @return
 	 */
 	public boolean isExist(String key);
 	/**
-	 * 移除缓存
+	 * Remove Cache
 	 * @param key
 	 * @param lazy
 	 */
 	public void remove(String key, boolean lazy);
 	
 	/**
-	 * 是否是开发模式
-	 * 开发模式缓存均无效，方便调试
+	 * Whether Enable Develop Mode
 	 * @param devMode
 	 */
 	public void setDevMode(boolean devMode);
 	/**
-	 * 是否支持过期时间
+	 * Whether Support Expiration Time
 	 * @return
 	 */
 	public boolean isSupportExpiration();

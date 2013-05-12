@@ -9,7 +9,7 @@ import java.util.Set;
 import name.orionis.helper.cache.ICache;
 
 /**
- * 基于内存的缓存
+ * Memory based cache
  * @author code.404
  *
  */
@@ -42,22 +42,22 @@ public class MemoryCache implements ICache {
 	@Override
 	synchronized public boolean isExist(String key) {
 		
-		// 开发模式
+		// Develop mode
 		if(devMode){
 			return false;
 		}
 		
-		// 如果不包含key，则直接false
+		// If not contained the key, return false
 		if(!map.containsKey(key)){
 			return false;
 		}
-		// 读取缓存对象，判断是否超时
+		// Read cached object, and judge if out of date
 		CacheObject cObj = (CacheObject) map.get(key);
-		// 超时时间-1则表明永不超时
+		// If expiration time is -1, means never be out of date
 		if(cObj.expiration == -1){
 			return true;
 		}
-		// 判断是否超时，超时则清理key
+		// If cached object out of date, we need clear the cache related to the key
 		long curT = System.currentTimeMillis();
 		if(curT - cObj.createTime  >= cObj.expiration){
 			map.remove(key);
@@ -76,14 +76,14 @@ public class MemoryCache implements ICache {
 			}else{
 				List<String> deleteKeys = new ArrayList<String>();
 				
-				//先查找出需要删除的key列表
+				// Search for keys we want to delete
 				Set<String> keySet = map.keySet();
 				for(String k : keySet){
 					if(k.matches(key)){
 						deleteKeys.add(k);
 					}
 				}
-				//对需要删除的key进行操作
+				// Execute the delete operation对
 				for(String deleteKey: deleteKeys){
 					map.remove(deleteKey);
 				}

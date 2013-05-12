@@ -11,13 +11,13 @@ import java.io.ObjectOutputStream;
 import name.orionis.helper.cache.ICache;
 
 /**
- * 基于文件系统的缓存
+ * File system based cache
  * @author code.404
  *
  */
 public class FileSystemCache implements ICache {
 	private String suffix = "._cache";
-	private String path = "C:\\";
+	private String path = "./";
 	private boolean devMode = false;
 	
 	@Override
@@ -98,7 +98,7 @@ public class FileSystemCache implements ICache {
 
 	@Override
 	public void remove(String key, boolean lazy) {
-		// 实现：删除文件，暂未实现。
+		// we need to delete files.
 	}
 
 	@Override
