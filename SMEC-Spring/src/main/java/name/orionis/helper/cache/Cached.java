@@ -12,29 +12,39 @@ import java.lang.annotation.Target;
  * @2013-5-11
  * Site : http://blog.orionis.name
  * 
- * Usage：
- * 		使用该annotation标注的方法的返回值会被缓存。
- * 		value: 指定了缓存使用的key，默认程序会根据方法签名以及参数列表的取值
- * 	自动生成MD5散列加密的key，如果需要使用重载缓存功能的话，必须手动指定一个
- *  value。
- * 		appendParam: 标注了是否是在缓存key上增加方法参数，默认情况下是自动追
- *  加的，如果该参数设为false，则不会追加，同时identifyParams参数无效。需要
- *  注意的是，如果该参数设为了false，则只会对方法缓存一次，随后不管参数是什么
- *  ，都是返回相同结果，这就可能造成非预期的效果，因此，除非缓存方法没有参数
- *  列表，不要指定该参数为false。
- * 		expiraction: 参数标注了该方法的缓存时间，默认值是-1，永不过期，缓存
- * 时间单位为毫秒。
- * 		reload标注了该方法为重载缓存方法，该参数开启的情况下，需要标注的方法
- * 返回值为void，并且没有方法参数。要该reload参数生效的话，必须自定义value属
- * 性，否则抛出异常。同时，该方法标注的方法一般方法体为空，不需要增加额外的处
- * 理逻辑。
- * 		enableRegex: 参数与reload参数相关，只在reload为true的情况下有效，表
- * 明value属性所指的key是支持正则表达式的，该参数默认值为false，不支持正则表
- * 达式，但是可以使用*作为通配符匹配任意字符。
- * 		identifyParams: 该参数是一个字符数组，取值应为方法参数的参数名，用于
- * 标识该方法的缓存key追加指定参数的值哈希值作为后缀，如果没有指定参数列表的话
- * ，则使用所有参数的值得哈希值追加。
- *  注意的是，该参数仅在appendParam参数为true的情况下可用。
+ * Usage : 
+ * 		The returned value of method with this annotation will be cached
+ * 		value : Indicate that the key will be used to cache object, by default,
+ *  system will automatically generate one with md5 hashed according to 
+ *  the method signature and the parameters list. If you want to rebuild 
+ *  cache , you must specified one manual.
+ *  
+ * 		appendParam : Indicate that whether appended method parameters to the 
+ * cache key, by default, system will automatically appended one. If you set this 
+ * parameter to false, will not appended and meanwhile, identifyParams will be 
+ * invalid. Something important , if we set the parameter to false, system will 
+ * cache the method result once with the first time we access it , then when we 
+ * access it, we will get the same result always. this will be unexpected result,
+ * so unless the method have not parameters, do not set to false.
+ * 
+ * 		expiration: Indicate the method cached time. by default it is -1, will be
+ * never out of date.(ms)
+ *  
+ * 		reload : Indicate the method is a reload method, if the value is true, 
+ * generally we need set the method return type  to "void". we must set the
+ * value attribute manual for reload method take effect, otherwise, an 
+ * IllegalArgumentException will be thrown.
+ * 
+ * 		enableRegex :  related to reload attribute, invalid only when reload attribute
+ * is set to true, indicate that the regular expression is supported by value attribute.
+ * By default , this attribute is false, but we can simply used * as an wildcard
+ * character to matching arbitrary characters.
+ * 
+ * 		identifyParams :  This attribute is an array of string. the value of the array 
+ * will be method parameter name. the indicate method parameter name will be hashed by 
+ * md5 algorithm and appended to the cache key as a suffix.If no parameters specified, 
+ * will use all the parameter`s values. more important, this attribute will be invalid 
+ * only when the appendParam attribute is true.
  */
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
