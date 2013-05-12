@@ -102,7 +102,7 @@ public class CacheAspect {
 		/**
 		 * Execution 
 		 * If we already had an cache, directly return the cached result
-		 * otherwise cached it first , the reload value from cache
+		 * otherwise cached it first , then reload value from cache
 		 */
 		if(!cache.isExist(key)){
 			Object proceed = pjp.proceed();
