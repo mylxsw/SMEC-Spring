@@ -1,0 +1,4 @@
+#Sun May 12 18:29:57 CST 2013
+eclipse.preferences.version=1
+validator.Checked=src/main/java/applicationContext-core.xml,src/main/java/applicationContext-aop.xml
+validator.Unchecked=
